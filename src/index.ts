@@ -2,6 +2,7 @@ import { Socket, createConnection } from "net";
 import WaClient from "./types/WaClient";
 import { SendAction, StartAction, StatusAction } from "./types/Actions";
 import event from "./event";
+import { ChatEvent } from "./types/Events";
 
 const waClient = (host: string, port: number) => {
   let client: Socket;
@@ -58,9 +59,13 @@ const waClient = (host: string, port: number) => {
     return apiClient;
   };
 
+  const fakeMessage = (data: ChatEvent) => {
+    event.emit("chat", data);
+  };
+
   const apiClient: WaClient = { send, start, status, on: event.on };
 
-  return { create };
+  return { create, fakeMessage };
 };
 
 export default waClient;
