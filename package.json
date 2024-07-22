@@ -1,0 +1,27 @@
+{
+  "name": "videa-wa-client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [],
+  "author": "akbaraditamasp <akbaraditamasp@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/globalpiranti/videa-wa-client.git"
+  },
+  "homepage": "https://github.com/globalpiranti/videa-wa-client",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.14.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
+  }
+}
