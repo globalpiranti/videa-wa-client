@@ -16,8 +16,14 @@ const waClient = (host: string, port: number) => {
         },
         () => {
           socket.on("data", (data) => {
-            const newData = JSON.parse(data.toString());
-            event.emit(newData.type, newData.payload);
+            try {
+              const raws = data.toString().split("\n");
+
+              for (const raw of raws) {
+                const newData = JSON.parse(raw);
+                event.emit(newData.type, newData.payload);
+              }
+            } catch (e) {}
           });
           client = socket;
 
@@ -26,37 +32,61 @@ const waClient = (host: string, port: number) => {
       );
     });
 
-  const send = (params: SendAction): WaClient => {
-    client.write(
-      JSON.stringify({
-        payload: params,
-        type: "send",
-      })
-    );
+  const send = (params: SendAction): Promise<void> => {
+    return new Promise<void>((resolve, reject) => {
+      client.write(
+        JSON.stringify({
+          payload: params,
+          type: "send",
+        }) + "\n",
+        (err) => {
+          if (err) {
+            reject(err);
+            return;
+          }
 
-    return apiClient;
+          resolve();
+        }
+      );
+    });
   };
 
-  const start = (params: StartAction): WaClient => {
-    client.write(
-      JSON.stringify({
-        type: "start",
-        payload: params,
-      })
-    );
+  const start = (params: StartAction): Promise<void> => {
+    return new Promise<void>((resolve, reject) => {
+      client.write(
+        JSON.stringify({
+          type: "start",
+          payload: params,
+        }) + "\n",
+        (err) => {
+          if (err) {
+            reject(err);
+            return;
+          }
 
-    return apiClient;
+          resolve();
+        }
+      );
+    });
   };
 
-  const status = (params: StatusAction): WaClient => {
-    client.write(
-      JSON.stringify({
-        type: "status",
-        payload: params,
-      })
-    );
+  const status = (params: StatusAction): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      client.write(
+        JSON.stringify({
+          type: "status",
+          payload: params,
+        }) + "\n",
+        (err) => {
+          if (err) {
+            reject(err);
+            return;
+          }
 
-    return apiClient;
+          resolve();
+        }
+      );
+    });
   };
 
   const fakeMessage = (data: ChatEvent) => {
