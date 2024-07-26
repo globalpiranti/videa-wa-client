@@ -9,11 +9,10 @@ export interface ChatEvent {
   chat: any;
 }
 
-export interface MessageEvent {
+export interface MessageEvent<T = any> {
   id: string;
-  payload: {
-    type: string;
-    to: string;
-    text?: string;
-  };
+  type: string;
+  to: string;
+  text?: string;
+  extraParams?: Record<string, T>;
 }
