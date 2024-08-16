@@ -7,6 +7,20 @@ import { ChatEvent } from "./types/Events";
 const waClient = (host: string, port: number) => {
   let client: Socket;
 
+  const reconnect = () => {
+    return new Promise<void>((resolve) => {
+      const id = setTimeout(async () => {
+        await create()
+          .then(() => {
+            clearTimeout(id);
+            resolve();
+            return;
+          })
+          .catch(() => {});
+      }, 10000);
+    });
+  };
+
   const create = () =>
     new Promise<WaClient>((resolve) => {
       const socket = createConnection(
@@ -15,6 +29,8 @@ const waClient = (host: string, port: number) => {
           port,
         },
         () => {
+          event.emit("connected");
+
           socket.on("data", (data) => {
             try {
               const raws = data.toString().split("\n");
@@ -26,10 +42,18 @@ const waClient = (host: string, port: number) => {
             } catch (e) {}
           });
           client = socket;
-
-          resolve(apiClient);
         }
       );
+
+      socket.on("close", async () => {
+        await reconnect();
+      });
+
+      socket.on("error", async () => {
+        socket.end();
+      });
+
+      resolve(apiClient);
     });
 
   const send = (params: SendAction): Promise<void> => {
