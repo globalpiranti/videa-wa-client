@@ -41,7 +41,6 @@ const waClient = (host: string, port: number) => {
               }
             } catch (e) {}
           });
-          client = socket;
         }
       );
 
@@ -53,6 +52,7 @@ const waClient = (host: string, port: number) => {
         socket.end();
       });
 
+      client = socket;
       resolve(apiClient);
     });
 
