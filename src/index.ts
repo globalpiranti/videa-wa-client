@@ -5,7 +5,7 @@ import event from "./event";
 import { ChatEvent } from "./types/Events";
 
 const waClient = (host: string, port: number) => {
-  let client: Socket;
+  let client: Socket | undefined;
 
   const reconnect = () => {
     return new Promise<void>((resolve) => {
@@ -29,6 +29,7 @@ const waClient = (host: string, port: number) => {
           port,
         },
         () => {
+          client = socket;
           event.emit("connected");
 
           socket.on("data", (data) => {
@@ -45,6 +46,7 @@ const waClient = (host: string, port: number) => {
       );
 
       socket.on("close", async () => {
+        client = undefined;
         await reconnect();
       });
 
@@ -52,12 +54,12 @@ const waClient = (host: string, port: number) => {
         socket.end();
       });
 
-      client = socket;
       resolve(apiClient);
     });
 
   const send = (params: SendAction): Promise<void> => {
     return new Promise<void>((resolve, reject) => {
+      if (!client) return reject(new Error("CLIEN NOT READY"));
       client.write(
         JSON.stringify({
           payload: params,
@@ -77,6 +79,7 @@ const waClient = (host: string, port: number) => {
 
   const start = (params: StartAction): Promise<void> => {
     return new Promise<void>((resolve, reject) => {
+      if (!client) return reject(new Error("CLIEN NOT READY"));
       client.write(
         JSON.stringify({
           type: "start",
@@ -96,6 +99,7 @@ const waClient = (host: string, port: number) => {
 
   const status = (params: StatusAction): Promise<void> => {
     return new Promise((resolve, reject) => {
+      if (!client) return reject(new Error("CLIEN NOT READY"));
       client.write(
         JSON.stringify({
           type: "status",
