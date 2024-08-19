@@ -11,8 +11,7 @@ export interface ChatEvent {
 
 export interface MessageEvent<T = any> {
   id: string;
-  type: string;
   to: string;
-  text?: string;
+  content: any;
   extraParams?: Record<string, T>;
 }
