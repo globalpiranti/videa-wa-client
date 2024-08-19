@@ -16,8 +16,9 @@ import { StatusEvent } from "../src/types/Events";
         await client.send({
           id: "default",
           to: "6283836319218",
-          text: "P" + index,
-          type: "text",
+          content: {
+            text: "Hello",
+          },
           extraParams: {
             key: index,
           },

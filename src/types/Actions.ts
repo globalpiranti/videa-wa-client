@@ -1,8 +1,7 @@
 export interface SendAction<T = any> {
   id: string;
-  type: string;
   to: string;
-  text?: string;
+  content: any;
   extraParams?: Record<string, T>;
 }
 

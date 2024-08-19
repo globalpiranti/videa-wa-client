@@ -59,7 +59,7 @@ const waClient = (host: string, port: number) => {
 
   const send = (params: SendAction): Promise<void> => {
     return new Promise<void>((resolve, reject) => {
-      if (!client) return reject(new Error("CLIEN NOT READY"));
+      if (!client) return reject(new Error("CLIENT NOT READY"));
       client.write(
         JSON.stringify({
           payload: params,
